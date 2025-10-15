@@ -135,7 +135,7 @@ async function submitInvoice(data, items, chatId) {
   try {
     await page.goto('http://localhost:3000/login', { waitUntil: 'networkidle2' });
     await page.type('input[name="username"]', 'Affan');
-    await page.type('input[name="password"]', 'Hania1000');
+    await page.type('input[name="password"]', 'affan100');
     await Promise.all([
       page.click('button'),
       page.waitForNavigation({ waitUntil: 'networkidle2' })
