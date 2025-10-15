@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= accountName %> - <%= monthName %> <%= year %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; padding: 20px; }
+    h2 { text-align: center; margin-bottom: 20px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 10px;
+      text-align: center;
+    }
+    th { background: #e9ecef; }
+  </style>
+</head>
+<body>
+
+  <h2><%= accountName %> - <%= monthName %> <%= year %></h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th colspan="3">Debit</th>
+        <th colspan="3">Credit</th>
+      </tr>
+      <tr>
+        <th>Date</th><th>Details</th><th>Amount</th>
+        <th>Date</th><th>Details</th><th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% const max = Math.max(debitEntries.length, creditEntries.length); %>
+      <% for (let i = 0; i < max; i++) { %>
+        <tr>
+          <td><%= debitEntries[i] ? debitEntries[i].date : '' %></td>
+          <td><%= debitEntries[i] ? debitEntries[i].description : '' %></td>
+          <td><%= debitEntries[i] ? debitEntries[i].amount : '' %></td>
+          <td><%= creditEntries[i] ? creditEntries[i].date : '' %></td>
+          <td><%= creditEntries[i] ? creditEntries[i].description : '' %></td>
+          <td><%= creditEntries[i] ? creditEntries[i].amount : '' %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Opening Cash Balance</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light p-4">
+  <div class="container" style="max-width: 600px;">
+    <h2>💵 Opening Cash Balance</h2>
+    <form method="POST">
+      <div class="mb-3">
+        <label>Cash Amount (BDT)</label>
+        <input type="number" name="amount" class="form-control" required>
+      </div>
+      <button class="btn btn-success">➕ Add Opening Cash</button>
+      <a href="/" class="btn btn-secondary ms-2">← Back</a>
+    </form>
+
+    <h5 class="mt-4">🧾 Recorded Cash Openings</h5>
+    <table class="table table-bordered bg-white">
+      <tr><th>Date</th><th>Amount</th><th>Description</th></tr>
+      <% records.forEach(r => { %>
+        <tr><td><%= r.date %></td><td><%= r.amount %></td><td><%= r.description %></td></tr>
+      <% }) %>
+    </table>
+  </div>
+</body>
+</html>

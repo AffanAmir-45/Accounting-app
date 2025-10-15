@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      min-height: 100vh;
+      color: #000;
+      text-align: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .header-time {
+      font-size: 3rem;
+      font-weight: bold;
+    }
+    .header-date {
+      font-size: 1.2rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+    .welcome-text {
+      font-size: 2rem;
+      font-weight: 600;
+      font-family: 'Georgia', serif;
+      margin-bottom: 40px;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      padding: 0 20px;
+    }
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .card {
+      border: none;
+      border-radius: 15px;
+      padding: 20px;
+      background: white;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Time & Date -->
+  <div class="header-time" id="clock">--:--:--</div>
+  <div class="header-date" id="date">Loading...</div>
+  <div class="welcome-text">WELCOME TO (your company name) & CO.</div>
+
+  <% if (user && user.role === 'admin') { %>
+    <div class="mb-4">
+      <a href="/admin-dashboard" class="btn btn-warning btn-lg">⚙️ Admin Console</a>
+    </div>
+  <% } %>
+
+  <!-- Dashboard Cards -->
+  <div class="card-grid">
+
+    <a href="/invoice" class="card-link">
+      <div class="card">
+        <div class="card-icon">🧾</div>
+        <div>Create Invoice</div>
+      </div>
+    </a>
+
+    <a href="/cash" class="card-link">
+      <div class="card">
+        <div class="card-icon">💵</div>
+        <div>Cash Book</div>
+      </div>
+    </a>
+
+    <a href="/bank" class="card-link">
+      <div class="card">
+        <div class="card-icon">🏦</div>
+        <div>Bank</div>
+      </div>
+    </a>
+
+    <a href="/party-ledger" class="card-link">
+      <div class="card">
+        <div class="card-icon">📜</div>
+        <div>Ledger</div>
+      </div>
+    </a>
+
+    <a href="/expenses" class="card-link">
+      <div class="card">
+        <div class="card-icon">📉</div>
+        <div>Add Expense</div>
+      </div>
+    </a>
+
+    <a href="/invoice-tracker" class="card-link">
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <div>Invoice Tracker</div>
+      </div>
+    </a>
+
+    <a href="/profit-loss" class="card-link">
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <div>Profit & Loss</div>
+      </div>
+    </a>
+
+    <a href="/stock" class="card-link">
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <div>Stock</div>
+      </div>
+    </a>
+
+    <a href="/accounts" class="card-link">
+      <div class="card">
+        <div class="card-icon">📒</div>
+        <div>Accounts</div>
+      </div>
+    </a>
+
+    <a href="/logout" class="card-link">
+      <div class="card">
+        <div class="card-icon">🚪</div>
+        <div>Logout</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- JS for Time & Date -->
+  <script>
+    async function fetchInternetTime() {
+      try {
+        let res = await fetch("https://worldtimeapi.org/api/ip");
+        let data = await res.json();
+        let dateTime = new Date(data.datetime);
+        updateClock(dateTime);
+      } catch (e) {
+        console.error("Error fetching internet time:", e);
+      }
+    }
+
+    function updateClock(now) {
+      const days = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
+      const dayName = days[now.getDay()];
+      const time = now.toLocaleTimeString("en-GB");
+      const date = `${dayName} ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getFullYear()).slice(2)}`;
+      document.getElementById("clock").textContent = time;
+      document.getElementById("date").textContent = date;
+    }
+
+    setInterval(fetchInternetTime, 1000);
+    fetchInternetTime();
+  </script>
+
+</body>
+</html>

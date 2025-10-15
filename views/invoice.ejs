@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Invoice - (yor company name) & CO</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; }
+    .receipt {
+      width: 380px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      font-family: monospace;
+    }
+    .receipt h4 { text-align: center; font-weight: bold; margin-bottom: 20px; }
+    .receipt-line { display: flex; justify-content: space-between; margin-bottom: 10px; }
+    .buttons { margin-top: 20px; text-align: center; }
+    @media print { .buttons { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="receipt" id="invoiceReceipt">
+    <h4>🧾 SAFFAZ & CO</h4>
+    <form method="POST" action="/invoice">
+      <!-- Date -->
+      <div class="receipt-line">
+        <span>Date:</span>
+        <input type="date" name="date" class="form-control form-control-sm border-0" style="width: 60%;" required>
+      </div>
+
+      <!-- Type -->
+      <div class="receipt-line">
+        <span>Type:</span>
+        <select name="type" class="form-select form-select-sm border-0" style="width: 60%;" id="entryType" required>
+          <option value="cash_sale">Cash Sale</option>
+          <option value="credit_sale">Credit Sale</option>
+          <option value="cash_purchase">Cash Purchase</option>
+          <option value="credit_purchase">Credit Purchase</option>
+          <option value="receive_payment">Received from Debtor</option>
+          <option value="make_payment">Paid to Creditor</option>
+          <option value="received_cash_from_debtor">Received Cash from Debtor</option>
+          <option value="paid_cash_to_creditor">Paid Cash to Creditor</option>
+        </select>
+      </div>
+
+      <!-- Party -->
+      <div class="receipt-line">
+        <span>Party:</span>
+        <input type="text" name="party_name" class="form-control form-control-sm border-0" style="width: 60%;">
+      </div>
+
+      <!-- Amount Only (For Payments) -->
+      <div class="receipt-line" id="amountRow" style="display: none;">
+        <span>Amount:</span>
+        <input type="number" name="amount_direct" class="form-control form-control-sm border-0" style="width: 60%;">
+      </div>
+
+      <!-- Items Section -->
+      <div id="items">
+        <div class="item-row">
+          <div class="receipt-line">
+            <span>Item:</span>
+            <input type="text" name="item_name[]" class="form-control form-control-sm border-0" style="width: 60%;">
+          </div>
+          <div class="receipt-line">
+            <span>Qty:</span>
+            <input type="number" name="quantity[]" class="form-control form-control-sm border-0" style="width: 60%;" oninput="calculateTotal()">
+          </div>
+          <div class="receipt-line">
+            <span>Rate:</span>
+            <input type="number" name="rate[]" class="form-control form-control-sm border-0" style="width: 60%;" oninput="calculateTotal()">
+          </div>
+          <div class="receipt-line">
+            <span>Amount:</span>
+            <input type="number" name="amount[]" class="form-control form-control-sm border-0" style="width: 60%;" readonly>
+          </div>
+          <div class="text-end mb-2">
+            <button type="button" class="btn btn-sm btn-danger" onclick="this.closest('.item-row').remove(); calculateTotal();">Remove</button>
+          </div>
+          <hr>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button type="button" class="btn btn-sm btn-secondary" onclick="addItem()">➕ Add Item</button>
+      </div>
+
+      <!-- Total Amount -->
+      <div class="text-end mt-3">
+        <strong>Total: <span id="totalAmount">0</span> BDT</strong>
+      </div>
+
+      <!-- Buttons -->
+      <div class="buttons">
+        <button type="submit" class="btn btn-sm btn-primary">💾 Save Invoice</button>
+        <button type="button" onclick="takeScreenshot()" class="btn btn-sm btn-success">📸 Screenshot</button>
+        <button type="button" onclick="printInvoice()" class="btn btn-sm btn-outline-secondary">🖨️ Print</button>
+        <a href="/" class="btn btn-sm btn-danger">⬅ Back</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    function takeScreenshot() {
+      html2canvas(document.getElementById('invoiceReceipt')).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'invoice.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    function printInvoice() {
+      window.print();
+    }
+
+    function addItem() {
+      const block = `
+        <div class="item-row">
+          <div class="receipt-line">
+            <span>Item:</span>
+            <input type="text" name="item_name[]" class="form-control form-control-sm border-0" style="width: 60%;">
+          </div>
+          <div class="receipt-line">
+            <span>Qty:</span>
+            <input type="number" name="quantity[]" class="form-control form-control-sm border-0" style="width: 60%;" oninput="calculateTotal()">
+          </div>
+          <div class="receipt-line">
+            <span>Rate:</span>
+            <input type="number" name="rate[]" class="form-control form-control-sm border-0" style="width: 60%;" oninput="calculateTotal()">
+          </div>
+          <div class="receipt-line">
+            <span>Amount:</span>
+            <input type="number" name="amount[]" class="form-control form-control-sm border-0" style="width: 60%;" readonly>
+          </div>
+          <div class="text-end mb-2">
+            <button type="button" class="btn btn-sm btn-danger" onclick="this.closest('.item-row').remove(); calculateTotal();">Remove</button>
+          </div>
+          <hr>
+        </div>
+      `;
+      document.getElementById('items').insertAdjacentHTML('beforeend', block);
+    }
+
+    // Show/hide item or amount based on type
+    const typeSelect = document.getElementById('entryType');
+    const amountRow = document.getElementById('amountRow');
+    const itemsSection = document.getElementById('items');
+    typeSelect.addEventListener('change', () => {
+      const value = typeSelect.value;
+      if (
+        value === 'receive_payment' ||
+        value === 'make_payment' ||
+        value === 'received_cash_from_debtor' ||
+        value === 'paid_cash_to_creditor'
+      ) {
+        amountRow.style.display = 'flex';
+        itemsSection.style.display = 'none';
+      } else {
+        amountRow.style.display = 'none';
+        itemsSection.style.display = 'block';
+      }
+    });
+
+    // Format number in lakh/crore style
+    function formatIndianNumber(num) {
+      return num.toLocaleString('en-IN');
+    }
+
+    // Calculate total
+    function calculateTotal() {
+      let total = 0;
+      document.querySelectorAll('.item-row').forEach(row => {
+        const qty = parseFloat(row.querySelector('[name="quantity[]"]').value) || 0;
+        const rate = parseFloat(row.querySelector('[name="rate[]"]').value) || 0;
+        const amount = qty * rate;
+        row.querySelector('[name="amount[]"]').value = amount.toFixed(2);
+        total += amount;
+      });
+      document.getElementById('totalAmount').innerText = formatIndianNumber(total.toFixed(2));
+    }
+
+    window.onload = calculateTotal;
+  </script>
+</body>
+</html>

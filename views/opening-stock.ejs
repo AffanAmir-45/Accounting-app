@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Opening Stock</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4 bg-light">
+  <div class="container">
+    <h2>📦 Add or Adjust Opening Stock</h2>
+    <form method="POST" class="row g-3 mb-4">
+      <div class="col-md-6">
+        <input type="text" name="item_name" placeholder="Item name" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <input type="number" name="quantity" placeholder="Quantity" class="form-control" required>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100">➕ Add/Update</button>
+      </div>
+    </form>
+
+    <h5>📋 Current Stock</h5>
+    <table class="table table-bordered">
+      <tr><th>Item</th><th>Quantity</th></tr>
+      <% stock.forEach(row => { %>
+        <tr><td><%= row.item_name %></td><td><%= row.quantity %></td></tr>
+      <% }) %>
+    </table>
+    <a href="/" class="btn btn-secondary mt-3">← Back to Dashboard</a>
+  </div>
+</body>
+</html>
